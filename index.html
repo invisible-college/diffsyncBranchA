@@ -1,0 +1,38 @@
+
+<body>
+<script src="./diffsync.js"></script>
+<script>
+
+var t = document.createElement('textarea')
+t.style.width = '100%'
+t.style.height = '100%'
+document.body.append(t)
+
+var ds = diffsync.create_client({
+	// ws_url : 'ws://localhost:60606',
+	ws_url : 'wss://invisible.college:60607',
+	channel : '/wiki/god',
+	get_text : function () {
+	    return t.value
+	},
+	get_range : function () {
+	    return [t.selectionStart, t.selectionEnd]
+	},
+	on_text : function (text, range) {
+	    t.value = text
+	    t.setSelectionRange(range[0], range[1])
+	},
+	on_range : null
+})
+
+t.onkeyup = function () {
+    ds.on_change()
+}
+t.onpaste = function () {
+    setTimeout(function () {
+        ds.on_change()
+    }, 0)
+}
+
+</script>
+</body>
