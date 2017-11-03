@@ -170,6 +170,11 @@ diffsync.create_server = function (options) {
             if (!(o.v && o.v >= diffsync.version)) { return }
             if (o.ping) { return try_send(ws, JSON.stringify({ pong : true })) }
 
+
+            // work here
+            console.log('message: ' + message)
+
+
             var uid = o.uid
             users_to_sockets[uid] = ws
 
@@ -250,7 +255,6 @@ diffsync.create_server = function (options) {
 
 
             // work here
-            console.log('message: ' + message)
             console.log('minigit: ' + JSON.stringify(channel.minigit, null, '    '))
             console.log('members: ' + JSON.stringify(channel.members, null, '    '))
 
