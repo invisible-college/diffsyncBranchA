@@ -1,7 +1,7 @@
 
 var diffsync = (typeof(module) != 'undefined') ? module.exports : {}
 
-diffsync.version = 1026
+diffsync.version = 1027
 
 diffsync.create_client = function (options) {
     // options: ws_url, channel, get_text, get_range, on_text, on_range
