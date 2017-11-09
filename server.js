@@ -4,7 +4,6 @@ console.log('diffsync version ' + diffsync.version)
 
 var bus = require('statebus')()
 bus.sqlite_store()
-// bus.honk = true
 
 var channels = {}
 for (var key in bus.cache) {
@@ -41,14 +40,6 @@ console.log('openning ' + server_type + ' server on port ' + port)
 var WebSocket = require('ws')
 var wss = new WebSocket.Server({ server : web_server })
 
-
-
-// work here
-var what_i_think_should_be_in_state_bus = {}
-
-
-
-
 var diff_server = diffsync.create_server({
     wss : wss,
     initial_data : channels,
@@ -65,19 +56,8 @@ var diff_server = diffsync.create_server({
                     channel : changes.channel,
                     commit : c
                 })
-
-                // work here
-                what_i_think_should_be_in_state_bus[id] = {
-                    key : key,
-                    id : id,
-                    channel : changes.channel,
-                    commit : c
-                }
             } else {
                 bus.del(key)
-
-                // work here
-                what_i_think_should_be_in_state_bus[id] = null
             }
         }
         for (var id in changes.members) {
@@ -96,59 +76,5 @@ var diff_server = diffsync.create_server({
                 bus.del(key)
             }
         }
-
-
-        // work here
-        var bus_ids = {}
-        each(what_i_think_should_be_in_state_bus, function (_, id) {
-            if (_) {
-                bus_ids[id] = true
-            }
-        })
-
-        var minigit_ids = {}
-        each(diff_server.channels[changes.channel].minigit.commits, function (c, id) {
-            minigit_ids[id] = true
-        })
-
-        var diff = false
-        each(bus_ids, function (_, id) {
-            if (!minigit_ids[id]) diff = true
-        })
-        each(minigit_ids, function (_, id) {
-            if (!bus_ids[id]) diff = true
-        })
-        if (diff) {
-            console.log('changes:', changes)
-            console.log('bus_ids:', bus_ids)
-            console.log('minigit  :', diff_server.channels[changes.channel].minigit.commits)
-            console.log('what_i_think_should_be_in_state_bus  :', what_i_think_should_be_in_state_bus)
-
-            console.log('BAD2!')
-            throw 'BAD2!'
-        }
     }
 })
-
-process.on('SIGTERM', function () {
-    console.log('here you go:', what_i_think_should_be_in_state_bus)
-    console.log('exited...')
-})
-
-// work here
-function each(o, cb) {
-    if (o instanceof Array) {
-        for (var i = 0; i < o.length; i++) {
-            if (cb(o[i], i, o) == false)
-                return false
-        }
-    } else {
-        for (var k in o) {
-            if (o.hasOwnProperty(k)) {
-                if (cb(o[k], k, o) == false)
-                    return false
-            }
-        }
-    }
-    return true
-}
