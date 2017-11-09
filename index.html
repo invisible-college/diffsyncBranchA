@@ -6,6 +6,25 @@
 var t = document.createElement('textarea')
 t.style.width = '100%'
 t.style.height = '100%'
+
+// work here
+t.style.height = '90%'
+var b = document.createElement('button')
+b.innerHTML = 'make me go go'
+b.onclick = function () {
+	function blah() {
+		var s = t.value
+		var i = Math.floor(Math.random() * s.length)
+		var del = Math.floor(Math.random() * Math.random() * Math.random() * 3)
+		s = s.slice(0, i) + String.fromCharCode(65 + Math.floor(Math.random() * 26)) + s.slice(i + del)
+		t.value = s
+		ds.on_change()
+		setTimeout(blah, Math.random() * 400)
+	}
+	blah()
+}
+document.body.append(b)
+
 document.body.append(t)
 
 var ds = diffsync.create_client({

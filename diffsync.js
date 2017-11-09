@@ -1,7 +1,7 @@
 
 var diffsync = (typeof(module) != 'undefined') ? module.exports : {}
 
-diffsync.version = 1033
+diffsync.version = 1037
 diffsync.port = 60607
 
 diffsync.create_client = function (options) {
@@ -67,15 +67,11 @@ diffsync.create_client = function (options) {
     
         ws.onmessage = function (event) {
             if (!ws) { return }
-
-
-            // work here
-            if (!event.data.match(/ping|pong/))
-                console.log('message: ' + event.data)
-
-
             var o = JSON.parse(event.data)
-            if (o.pong) on_pong()
+            if (o.pong) { return on_pong() }
+
+            console.log('message: ' + event.data)
+
             if (o.commits) {
                 self.on_change()
                 minigit.merge(o.commits)
@@ -167,10 +163,7 @@ diffsync.create_server = function (options) {
             if (!(o.v && o.v >= diffsync.version)) { return }
             if (o.ping) { return try_send(ws, JSON.stringify({ pong : true })) }
 
-
-            // work here
             console.log('message: ' + message)
-
 
             var uid = o.uid
             users_to_sockets[uid] = ws
@@ -239,6 +232,7 @@ diffsync.create_server = function (options) {
                 each(channel.members, function (m) {
                     extend(necessary, m.do_not_delete)
                 })
+
                 extend(changes.commits, channel.minigit.remove_unnecessary(necessary))
             }
             if (o.range)
