@@ -4,6 +4,26 @@ console.log('diffsync version ' + diffsync.version)
 
 var bus = require('statebus')()
 bus.sqlite_store()
+// bus.honk = true
+
+
+bus.save({
+    key : 'happyhappy',
+    value : 'joy joy',
+    v2 : 'more joyousness!'
+})
+for (var row of bus.sqlite_store_db.prepare('select * from cache').iterate()) {
+    var obj = JSON.parse(row.obj)
+    console.log('obj: ', obj)
+}
+
+throw 'blop'
+
+
+
+
+
+
 
 var channels = {}
 for (var key in bus.cache) {
