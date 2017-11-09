@@ -1,7 +1,7 @@
 
 var diffsync = (typeof(module) != 'undefined') ? module.exports : {}
 
-diffsync.version = 1038
+diffsync.version = 1039
 diffsync.port = 60607
 
 diffsync.create_client = function (options) {
