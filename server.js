@@ -111,6 +111,12 @@ var diff_server = diffsync.create_server({
             console.log('changes:', changes)
             console.log('bus_ids:', bus_ids)
             console.log('minigit  :', diff_server.channels[changes.channel].minigit.commits)
+
+            for (var row of bus.sqlite_store_db.prepare('select * from cache').iterate()) {
+                var obj = JSON.parse(row.obj)
+                console.log('obj: ', obj)
+            }
+
             console.log('BAD!')
             throw 'BAD!'
         }
