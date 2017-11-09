@@ -100,7 +100,8 @@ var diff_server = diffsync.create_server({
         })
         if (diff) {
             console.log('changes:', changes)
-            console.log(JSON.stringify(changes, null, '    '))
+            console.log('bus.cache:', bus.cache)
+            console.log('minigit  :', diff_server.channels[changes.channel].minigit.commits)
             console.log('BAD!')
             throw 'BAD!'
         }
