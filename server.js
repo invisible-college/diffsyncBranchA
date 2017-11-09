@@ -40,7 +40,7 @@ console.log('openning ' + server_type + ' server on port ' + port)
 var WebSocket = require('ws')
 var wss = new WebSocket.Server({ server : web_server })
 
-diffsync.create_server({
+var diff_server = diffsync.create_server({
     wss : wss,
     initial_data : channels,
     on_change : function (changes) {
@@ -77,7 +77,32 @@ diffsync.create_server({
             }
         }
 
+
         // work here
-        return bus.cache
+        var bus_ids = {}
+        each(bus.cache, function (c, id) {
+            if (!id.startsWith('commit')) { return }
+            if (c.channel != changes.channel) { return }
+            bus_ids[c.id] = true
+        })
+
+        var minigit_ids = {}
+        each(diff_server.channels[changes.channel].minigit.commits, function (c, id) {
+            minigit_ids[id] = true
+        })
+
+        var diff = false
+        each(bus_ids, function (_, id) {
+            if (!minigit_ids[id]) diff = true
+        })
+        each(minigit_ids, function (_, id) {
+            if (!bus_ids[id]) diff = true
+        })
+        if (diff) {
+            console.log('changes:', changes)
+            console.log(JSON.stringify(changes, null, '    '))
+            console.log('BAD!')
+            throw 'BAD!'
+        }
     }
 })

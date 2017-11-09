@@ -242,22 +242,7 @@ diffsync.create_server = function (options) {
                 changes.members[uid] = null
             }
 
-            if (options.on_change) {
-                var busCache = options.on_change(changes)
-
-                // work here
-                var parentless_count = 0
-                each(busCache, function (c, id) {
-                    if (!id.startsWith('commit')) { return }
-                    if (Object.keys(c.commit.to_parents).length == 0) {
-                        parentless_count++
-                    }
-                })
-                if (parentless_count > 1) {
-                    console.log('ooooOOOOPPP!! tooo MANY parentless things..')
-                    throw 'ooooOOOOPPP!! tooo MANY parentless things..'
-                }
-            }
+            if (options.on_change) options.on_change(changes)
         })
     })
 
