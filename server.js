@@ -67,7 +67,7 @@ var diff_server = diffsync.create_server({
                 })
 
                 // work here
-                what_i_think_should_be_in_state_bus[key] = {
+                what_i_think_should_be_in_state_bus[id] = {
                     key : key,
                     id : id,
                     channel : changes.channel,
@@ -77,7 +77,7 @@ var diff_server = diffsync.create_server({
                 bus.del(key)
 
                 // work here
-                what_i_think_should_be_in_state_bus[key] = null
+                what_i_think_should_be_in_state_bus[id] = null
             }
         }
         for (var id in changes.members) {
