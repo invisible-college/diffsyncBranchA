@@ -85,6 +85,8 @@ var diff_server = diffsync.create_server({
 
 
         // work here
+        console.log('blar:')
+        console.log(bus)
         for (var row of bus.sqlite_store_db.prepare('select * from cache').iterate()) {
             var obj = JSON.parse(row.obj)
             console.log('obj: ', obj)
