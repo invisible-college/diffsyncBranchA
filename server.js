@@ -85,22 +85,15 @@ var diff_server = diffsync.create_server({
 
 
         // work here
-        console.log('blar:')
-        console.log(bus)
+        var bus_ids = {}
         for (var row of bus.sqlite_store_db.prepare('select * from cache').iterate()) {
             var obj = JSON.parse(row.obj)
-            console.log('obj: ', obj)
+            if (obj.key.startsWith('commit')) {
+                if (obj.channel == changes.channel) {
+                    bus_ids[obj.id] = true
+                }
+            }
         }
-        // throw 'bloop'
-
-
-
-        var bus_ids = {}
-        each(bus.cache, function (c, id) {
-            if (!id.startsWith('commit')) { return }
-            if (c.channel != changes.channel) { return }
-            bus_ids[c.id] = true
-        })
 
         var minigit_ids = {}
         each(diff_server.channels[changes.channel].minigit.commits, function (c, id) {
@@ -116,7 +109,7 @@ var diff_server = diffsync.create_server({
         })
         if (diff) {
             console.log('changes:', changes)
-            console.log('bus.cache:', bus.cache)
+            console.log('bus_ids:', bus_ids)
             console.log('minigit  :', diff_server.channels[changes.channel].minigit.commits)
             console.log('BAD!')
             throw 'BAD!'
