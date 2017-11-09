@@ -243,8 +243,23 @@ diffsync.create_server = function (options) {
             }
 
             if (options.on_change) options.on_change(changes)
+
+
+
+            // work here
+            var parentless_count = 0
+            each(channel.minigit.commits, function (c, id) {
+                if (Object.keys(c.to_parents).length == 0) {
+                    parentless_count++
+                }
+            })
+            if (parentless_count > 1) {
+                throw 'ooooOOOOPPP!! tooo many parentless things..'
+            }
         })
-    })    
+    })
+
+    return self
 }
 
 ///////////////
