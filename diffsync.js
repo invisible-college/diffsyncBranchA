@@ -248,7 +248,7 @@ diffsync.create_server = function (options) {
                 // work here
                 var parentless_count = 0
                 each(busCache, function (c, id) {
-                    if (!id.startsWith('commit')) { continue }
+                    if (!id.startsWith('commit')) { return }
                     if (Object.keys(c.commit.to_parents).length == 0) {
                         parentless_count++
                     }
