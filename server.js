@@ -91,7 +91,7 @@ var diff_server = diffsync.create_server({
             var obj = JSON.parse(row.obj)
             console.log('obj: ', obj)
         }
-        throw 'bloop'
+        // throw 'bloop'
 
 
 
