@@ -34,7 +34,7 @@ if (fs.existsSync('privkey.pem') && fs.existsSync('fullchain.pem')) {
     web_server = require('http').createServer()
     server_type = 'http'
 }
-var port = 60607
+var port = diffsync.port
 web_server.listen(port)
 console.log('openning ' + server_type + ' server on port ' + port)
 var WebSocket = require('ws')

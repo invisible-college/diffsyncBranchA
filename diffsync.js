@@ -1,7 +1,8 @@
 
 var diffsync = (typeof(module) != 'undefined') ? module.exports : {}
 
-diffsync.version = 1027
+diffsync.version = 1033
+diffsync.port = 60607
 
 diffsync.create_client = function (options) {
     // options: ws_url, channel, get_text, get_range, on_text, on_range
@@ -144,10 +145,6 @@ diffsync.create_server = function (options) {
 
     if (options.initial_data) {
         each(options.initial_data, function (data, channel) {
-
-            // work here
-            console.log('channel: ' + channel)
-
             var c = get_channel(channel)
             c.minigit.merge(data.commits)
             extend(c.members, data.members)
@@ -242,7 +239,7 @@ diffsync.create_server = function (options) {
                 each(channel.members, function (m) {
                     extend(necessary, m.do_not_delete)
                 })
-                channel.minigit.remove_unnecessary(necessary)
+                extend(changes.commits, channel.minigit.remove_unnecessary(necessary))
             }
             if (o.range)
                 send_to_all_but_me(message)
@@ -252,13 +249,6 @@ diffsync.create_server = function (options) {
             }
 
             if (options.on_change) options.on_change(changes)
-
-
-            // work here
-            console.log('minigit: ' + JSON.stringify(channel.minigit, null, '    '))
-            console.log('members: ' + JSON.stringify(channel.members, null, '    '))
-
-
         })
     })    
 }
@@ -275,23 +265,28 @@ diffsync.create_minigit = function () {
     }
 
     self.remove_unnecessary = function (spare_us) {
+        var affected = {}
         while (true) {
             var found = false
             each(self.commits, function (c, id) {
                 if (spare_us[id]) { return }
-                if (Object.keys(self.to_children[id]).length == 1) {
+                var aff = self.remove(id)
+                if (aff) {
+                    extend(affected, aff)
                     found = true
-                    self.remove(id)
                 }
             })
             if (!found) break
         }
+        return affected
     }
 
     self.remove = function (id) {
-        var being_removed = self.commits[id]
         var keys = Object.keys(self.to_children[id])
         if (keys.length == 1) {
+            var affected = {}
+
+            var being_removed = self.commits[id]
             var c_id = keys[0]
             var c = self.commits[c_id]
 
@@ -304,6 +299,7 @@ diffsync.create_minigit = function () {
             delete self.commit_cache[id]
             delete c.to_parents[id]
             delete c.from_parents[id]
+            affected[id] = null
 
             each(being_removed.to_parents, function (_, id) {
                 c.to_parents[id] = get_diff_patch(self.get_text(c_id), self.get_text(id))
@@ -312,8 +308,11 @@ diffsync.create_minigit = function () {
             if (Object.keys(c.to_parents).length == 0) {
                 c.text = self.get_text(c_id)
             }
+            affected[c_id] = c
 
             self.calc_children()
+
+            return affected
         }
     }
 
@@ -396,8 +395,8 @@ diffsync.create_minigit = function () {
             if (!next) { return null }
             var c_id = next
             var c = self.commits[c_id]
-            var text = c.text || self.commit_cache[c_id]
-            if (text) {
+            var text = (c.text != null) ? c.text : self.commit_cache[c_id]
+            if (text != null) {
                 var snowball = text
                 while (true) {
                     if (next == id) {
