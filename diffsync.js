@@ -242,19 +242,23 @@ diffsync.create_server = function (options) {
                 changes.members[uid] = null
             }
 
-            if (options.on_change) options.on_change(changes)
+            if (options.on_change) {
+                var busCache = options.on_change(changes)
 
-
-
-            // work here
-            var parentless_count = 0
-            each(channel.minigit.commits, function (c, id) {
-                if (Object.keys(c.to_parents).length == 0) {
-                    parentless_count++
+                // work here
+                var parentless_count = 0
+                each(busCache, function (c, id) {
+                    if (!id.startsWith('commit')) { continue }
+                    if (Object.keys(c.commit.to_parents).length == 0) {
+                        parentless_count++
+                    }
+                })
+                if (parentless_count == 0) {
+                    throw 'ooooOOOOPPP!! tooo FEW parentless things..'
                 }
-            })
-            if (parentless_count > 1) {
-                throw 'ooooOOOOPPP!! tooo many parentless things..'
+                if (parentless_count > 1) {
+                    throw 'ooooOOOOPPP!! tooo MANY parentless things..'
+                }
             }
         })
     })

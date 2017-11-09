@@ -76,5 +76,8 @@ diffsync.create_server({
                 bus.del(key)
             }
         }
+
+        // work here
+        return bus.cache
     }
 })
