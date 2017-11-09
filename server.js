@@ -7,15 +7,18 @@ bus.sqlite_store()
 // bus.honk = true
 
 
+console.log('111111')
 bus.save({
     key : 'happyhappy',
     value : 'joy joy',
     v2 : 'more joyousness!'
 })
+console.log('222222')
 for (var row of bus.sqlite_store_db.prepare('select * from cache').iterate()) {
     var obj = JSON.parse(row.obj)
     console.log('obj: ', obj)
 }
+console.log('333333')
 
 throw 'blop'
 
