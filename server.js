@@ -57,6 +57,9 @@ var diff_server = diffsync.create_server({
                     commit : c
                 })
             } else {
+                // work here
+                console.log('DELETING: ' + key)
+
                 bus.del(key)
             }
         }
@@ -73,6 +76,9 @@ var diff_server = diffsync.create_server({
                     member : m
                 })
             } else {
+                // work here
+                console.log('DELETING: ' + key)
+
                 bus.del(key)
             }
         }
