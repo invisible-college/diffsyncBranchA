@@ -64,6 +64,9 @@ diffsync.create_client = function (options) {
                 reconnect()
             }
         }
+
+        // work here
+        var statey = 0
     
         ws.onmessage = function (event) {
             if (!ws) { return }
@@ -95,6 +98,9 @@ diffsync.create_client = function (options) {
                     })
                     if (Object.keys(unacknowledged_commits).length > 0) {
                         send({ commits : unacknowledged_commits })
+
+                        // work here
+                        statey = 1
                     }
                 }
 
@@ -107,7 +113,10 @@ diffsync.create_client = function (options) {
             var cs = minigit.commit(options.get_text())
             if (cs) {
                 extend(unacknowledged_commits, cs)
-                send({ commits : cs })
+
+                // work here
+                send({ commits : cs, statey : statey })
+                statey = 2
             }
         }
         
