@@ -253,10 +253,6 @@ diffsync.create_server = function (options) {
                         parentless_count++
                     }
                 })
-                if (parentless_count == 0) {
-                    console.log('ooooOOOOPPP!! tooo FEW parentless things..')
-                    throw 'ooooOOOOPPP!! tooo FEW parentless things..'
-                }
                 if (parentless_count > 1) {
                     console.log('ooooOOOOPPP!! tooo MANY parentless things..')
                     throw 'ooooOOOOPPP!! tooo MANY parentless things..'
