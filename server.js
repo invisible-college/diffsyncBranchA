@@ -85,6 +85,14 @@ var diff_server = diffsync.create_server({
 
 
         // work here
+        for (var row of bus.sqlite_store_db.prepare('select * from cache').iterate()) {
+            var obj = JSON.parse(row.obj)
+            console.log('obj: ', obj)
+        }
+        throw 'bloop'
+
+
+
         var bus_ids = {}
         each(bus.cache, function (c, id) {
             if (!id.startsWith('commit')) { return }
