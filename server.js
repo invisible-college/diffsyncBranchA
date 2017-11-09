@@ -130,6 +130,13 @@ var diff_server = diffsync.create_server({
     }
 })
 
+process.on('SIGTERM', function () {
+  server.close(function () {
+    console.log('here you go:', what_i_think_should_be_in_state_bus)
+    console.log('exited...')
+  });
+});
+
 // work here
 function each(o, cb) {
     if (o instanceof Array) {
