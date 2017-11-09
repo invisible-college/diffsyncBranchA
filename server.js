@@ -6,28 +6,6 @@ var bus = require('statebus')()
 bus.sqlite_store()
 // bus.honk = true
 
-
-console.log('111111')
-bus.save({
-    key : 'happyhappy',
-    value : 'joy joy',
-    v2 : 'more joyousness!'
-})
-console.log('222222')
-for (var row of bus.sqlite_store_db.prepare('select * from cache').iterate()) {
-    var obj = JSON.parse(row.obj)
-    console.log('obj: ', obj)
-}
-console.log('333333')
-
-throw 'blop'
-
-
-
-
-
-
-
 var channels = {}
 for (var key in bus.cache) {
     if (!bus.cache.hasOwnProperty(key)) { continue }
@@ -63,6 +41,14 @@ console.log('openning ' + server_type + ' server on port ' + port)
 var WebSocket = require('ws')
 var wss = new WebSocket.Server({ server : web_server })
 
+
+
+// work here
+var what_i_think_should_be_in_state_bus = {}
+
+
+
+
 var diff_server = diffsync.create_server({
     wss : wss,
     initial_data : channels,
@@ -79,11 +65,19 @@ var diff_server = diffsync.create_server({
                     channel : changes.channel,
                     commit : c
                 })
-            } else {
-                // work here
-                console.log('DELETING: ' + key)
 
+                // work here
+                what_i_think_should_be_in_state_bus[key] = {
+                    key : key,
+                    id : id,
+                    channel : changes.channel,
+                    commit : c
+                }
+            } else {
                 bus.del(key)
+
+                // work here
+                what_i_think_should_be_in_state_bus[key] = null
             }
         }
         for (var id in changes.members) {
@@ -99,9 +93,6 @@ var diff_server = diffsync.create_server({
                     member : m
                 })
             } else {
-                // work here
-                console.log('DELETING: ' + key)
-
                 bus.del(key)
             }
         }
@@ -109,14 +100,11 @@ var diff_server = diffsync.create_server({
 
         // work here
         var bus_ids = {}
-        for (var row of bus.sqlite_store_db.prepare('select * from cache').iterate()) {
-            var obj = JSON.parse(row.obj)
-            if (obj.key.startsWith('commit')) {
-                if (obj.channel == changes.channel) {
-                    bus_ids[obj.id] = true
-                }
+        each(what_i_think_should_be_in_state_bus, function (_, id) {
+            if (_) {
+                bus_ids[id] = true
             }
-        }
+        })
 
         var minigit_ids = {}
         each(diff_server.channels[changes.channel].minigit.commits, function (c, id) {
@@ -134,14 +122,10 @@ var diff_server = diffsync.create_server({
             console.log('changes:', changes)
             console.log('bus_ids:', bus_ids)
             console.log('minigit  :', diff_server.channels[changes.channel].minigit.commits)
+            console.log('what_i_think_should_be_in_state_bus  :', what_i_think_should_be_in_state_bus)
 
-            for (var row of bus.sqlite_store_db.prepare('select * from cache').iterate()) {
-                var obj = JSON.parse(row.obj)
-                console.log('obj: ', obj)
-            }
-
-            console.log('BAD!')
-            throw 'BAD!'
+            console.log('BAD2!')
+            throw 'BAD2!'
         }
     }
 })
