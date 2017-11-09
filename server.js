@@ -3,7 +3,7 @@ var diffsync = require('./diffsync.js')
 console.log('diffsync version ' + diffsync.version)
 
 var bus = require('statebus')()
-bus.file_store()
+bus.sqlite_store()
 
 var channels = {}
 for (var key in bus.cache) {
