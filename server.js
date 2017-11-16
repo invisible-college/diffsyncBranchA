@@ -12,7 +12,19 @@ for (var key in bus.cache) {
     if (key.startsWith('commit/')) {
         if (!channels[o.channel])
             channels[o.channel] = { commits : {}, members : {} }
-        channels[o.channel].commits[o.id] = o.commit
+
+        // backwards compatability with 1022
+        if (o.parents) {
+            channels[o.channel].commits[o.id] = {
+                to_parents : o.parents,
+                from_parents : o.from_parents
+            }
+            if (o.text)
+                channels[o.channel].commits[o.id].text = o.text
+
+        } else {
+            channels[o.channel].commits[o.id] = o.commit
+        }
     }
     if (key.startsWith('member/')) {
         if (!channels[o.channel])
